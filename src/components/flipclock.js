@@ -3,13 +3,13 @@ import { useState, useEffect } from "react"
 
 const zeroPad = unit => (unit <= 9 ? `0${unit}` : unit)
 
-const getUnits = diff => {
+const breakdownDuration = diff => {
   const units = {
     // structure
     // year: 31536000,
     // month: 2592000,
-    // week: 604800, // uncomment row to ignore
-    days: 86400, // feel free to add your own row
+    // week: 604800,
+    days: 86400,
     hours: 3600,
     minutes: 60,
     seconds: 1,
@@ -24,25 +24,17 @@ const getUnits = diff => {
   }, {})
 }
 
-export const useCountdown = (endTime, startTime) => {
-  const [diff, setDiff] = useState(endTime - startTime)
+export default function FlipClock({ endTime }) {
+  const [countdown, setCountdown] = useState(endTime - Date.now())
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setDiff(endTime - Date.now())
+      setCountdown(endTime - Date.now())
     }, 1000)
-
     return () => clearInterval(interval)
   }, [endTime])
 
-  return getUnits(diff <= 0 ? 0 : diff)
-}
-
-export default function FlipClock({
-  endTime,
-  startTime = Date.now(),
-  ...rest
-}) {
-  const { days, hours, minutes, seconds } = useCountdown(endTime, startTime)
+  const { days, hours, minutes, seconds } = breakdownDuration(countdown)
   return (
     <div>
       {[
@@ -51,9 +43,9 @@ export default function FlipClock({
         [minutes, `minutes`],
         [seconds, `seconds`],
       ].map(([value, label]) => (
-        <div>
-          <h2>{zeroPad(value)}</h2>
+        <div key={label}>
           <h3>{label}</h3>
+          <h2>{zeroPad(value)}</h2>
         </div>
       ))}
     </div>

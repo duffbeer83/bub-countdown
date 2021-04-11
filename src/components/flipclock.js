@@ -24,6 +24,100 @@ const breakdownDuration = diff => {
   }, {})
 }
 
+/* 
+  updateTime() {
+  // get new date
+  const time = new Date()
+  // set time units
+  const hours = time.getHours()
+  const minutes = time.getMinutes()
+  const seconds = time.getSeconds()
+  // on hour chanage, update hours and shuffle state
+  if (hours !== this.state.hours) {
+    const hoursShuffle = !this.state.hoursShuffle
+    this.setState({
+      hours,
+      hoursShuffle,
+    })
+  }
+  // on minute chanage, update minutes and shuffle state
+  if (minutes !== this.state.minutes) {
+    const minutesShuffle = !this.state.minutesShuffle
+    this.setState({
+      minutes,
+      minutesShuffle,
+    })
+  }
+  // on second chanage, update seconds and shuffle state
+  if (seconds !== this.state.seconds) {
+    const secondsShuffle = !this.state.secondsShuffle
+    this.setState({
+      seconds,
+      secondsShuffle,
+    })
+  }
+}
+*/
+
+// todo: need to keep 'shuffle' state as well
+// function component
+const AnimatedCard = ({ animation, digit }) => {
+  return (
+    <div className={`flipCard ${animation}`}>
+      <span>{digit}</span>
+    </div>
+  )
+}
+
+// function component
+const StaticCard = ({ position, digit }) => {
+  return (
+    <div className={position}>
+      <span>{digit}</span>
+    </div>
+  )
+}
+
+// function component
+const FlipUnitContainer = ({ digit, shuffle, unit }) => {
+  // assign digit values
+  let currentDigit = digit
+  //  let previousDigit = digit - 1 // todo: this is assuming count up... need to store as state...
+  let previousDigit = digit + 1 // todo: this is assuming count up... need to store as state...
+
+  // to prevent a negative value
+  if (unit !== "hours") {
+    previousDigit = previousDigit === -1 ? 59 : previousDigit
+  } else {
+    previousDigit = previousDigit === -1 ? 23 : previousDigit
+  }
+
+  // add zero
+  if (currentDigit < 10) {
+    currentDigit = `0${currentDigit}`
+  }
+  if (previousDigit < 10) {
+    previousDigit = `0${previousDigit}`
+  }
+
+  // shuffle digits
+  const digit1 = shuffle ? previousDigit : currentDigit
+  const digit2 = !shuffle ? previousDigit : currentDigit
+
+  // shuffle animations
+  const animation1 = shuffle ? "fold" : "unfold"
+  const animation2 = !shuffle ? "fold" : "unfold"
+
+  return (
+    <div className={"flipUnitContainer"}>
+      <StaticCard position={"upperCard"} digit={currentDigit} />
+      <StaticCard position={"lowerCard"} digit={previousDigit} />
+      <AnimatedCard digit={digit1} animation={animation1} />
+      <AnimatedCard digit={digit2} animation={animation2} />
+    </div>
+  )
+}
+
 export default function FlipClock({ endTime }) {
   const [countdown, setCountdown] = useState(endTime - Date.now())
 
@@ -35,7 +129,12 @@ export default function FlipClock({ endTime }) {
   }, [endTime])
 
   const { days, hours, minutes, seconds } = breakdownDuration(countdown)
-  return (
+  const secondsShuffle = seconds % 2 == 0 ? true : false
+  const minutesShuffle = secondsShuffle
+  const hoursShuffle = secondsShuffle
+  const daysShuffle = secondsShuffle
+
+  /*  return (
     <div>
       {[
         [days, `days`],
@@ -49,5 +148,100 @@ export default function FlipClock({ endTime }) {
         </div>
       ))}
     </div>
+*/
+
+  // todo: make flipunit a component
+  // todo: have it remember its previous state and animate approriately
+  // todo: breakdown values so 1 flip per digit...
+
+  return (
+    <div className={"flipClock"}>
+      <FlipUnitContainer unit={"days"} digit={days} shuffle={daysShuffle} />
+      <FlipUnitContainer unit={"hours"} digit={hours} shuffle={hoursShuffle} />
+      <FlipUnitContainer
+        unit={"minutes"}
+        digit={minutes}
+        shuffle={minutesShuffle}
+      />
+      <FlipUnitContainer
+        unit={"seconds"}
+        digit={seconds}
+        shuffle={secondsShuffle}
+      />
+    </div>
   )
 }
+/*
+// class component
+class FlipClock extends React.Component {
+  updateTime() {
+    // get new date
+    const time = new Date()
+    // set time units
+    const hours = time.getHours()
+    const minutes = time.getMinutes()
+    const seconds = time.getSeconds()
+    // on hour chanage, update hours and shuffle state
+    if (hours !== this.state.hours) {
+      const hoursShuffle = !this.state.hoursShuffle
+      this.setState({
+        hours,
+        hoursShuffle,
+      })
+    }
+    // on minute chanage, update minutes and shuffle state
+    if (minutes !== this.state.minutes) {
+      const minutesShuffle = !this.state.minutesShuffle
+      this.setState({
+        minutes,
+        minutesShuffle,
+      })
+    }
+    // on second chanage, update seconds and shuffle state
+    if (seconds !== this.state.seconds) {
+      const secondsShuffle = !this.state.secondsShuffle
+      this.setState({
+        seconds,
+        secondsShuffle,
+      })
+    }
+  }
+
+  render() {
+    // state object destructuring
+    const {
+      hours,
+      minutes,
+      seconds,
+      hoursShuffle,
+      minutesShuffle,
+      secondsShuffle,
+    } = this.state
+
+    return (
+
+    )
+  }
+}
+
+// function component
+const Header = () => {
+  return (
+    <header>
+      <h1>React Flip Clock</h1>
+    </header>
+  )
+}
+
+// function component
+const App = () => {
+  return (
+    <div>
+      <Header />
+      <FlipClock />
+    </div>
+  )
+}
+
+ReactDOM.render(<App />, document.querySelector("#app"))
+*/

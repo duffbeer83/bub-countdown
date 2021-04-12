@@ -16,16 +16,14 @@ $turnDuration: 0.6s
 
 body
   margin: 0
-
-#app
   display: flex
   position: relative
   width: 100%
   min-height: 100vh
   justify-content: center
   align-items: center
-  background-color: #FBAB7E
-  background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%)
+  background-color: #1e796c
+  background-image: linear-gradient(62deg, #1e796c 0%, #02113a 100%)
 
 header
   display: flex
@@ -38,28 +36,46 @@ header
     letter-spacing: 0.1em
     color: white
 
-$border: whitesmoke
-$card: white
+$border: lighten(black, 10%)
+$card: lighten(black, 20%)
+$dark-card: lighten(black, 18%)
 $font-family: 'Droid Sans Mono', monospace
 $font-size: 5em
 $font-width: lighter
-$font-color: lighten(black, 20%)
+$font-color: darken(white, 20%)
 
 .flipClock
   display: flex
-  justify-content: space-between
-  width: 3 * 140px + 80px
+  flex-direction: row
 
-.flipUnitContainer
+@media (max-width: 970px)
+  .flipClock
+    flex-direction: column-reverse
+
+.flipGroup
+  margin: 0 20px
+
+  h2
+    font-family: 'Droid Sans Mono', monospace
+    font-weight: lighter
+    text-transform: uppercase
+    letter-spacing: 0.1em
+    color: white
+
+.flipUnit
+  display: flex
+
+.flipDigit
   display: block
   position: relative
-  width: 140px
+  width: 80px
   height: 120px
   perspective-origin: 50% 50%
   perspective: 300px
   background-color: $card
   border-radius: 3px
-  box-shadow: 0px 10px 10px -10px grey
+  box-shadow: 0px 10px 10px -5px
+  margin: 5px
 
 .upperCard, .lowerCard
   display: flex
@@ -129,7 +145,7 @@ $font-color: lighten(black, 20%)
     align-items: flex-end
     transform-origin: 50% 100%
     transform: rotateX(0deg) // from 0 to -180
-    background-color: $card
+    background-color: $dark-card
     border-top-left-radius: 3px
     border-top-right-radius: 3px
     border: 0.5px solid $border
